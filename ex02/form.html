@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <script type="text/javascript" src="popup.js"></script>
+    </head>
+    <body>
+        <form>
+            <label for="firstname">Firstname:</label>
+            <input type="text" id="firstname" name="firstname">
+            <br>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name">
+            <br>
+            <label for="age">Age:</label>
+            <input type="text" id="age" name="age">
+            <br>
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone">
+            <br>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email">
+            <br>
+            <label for="student">Student at 42 ? 
+                <input type="checkbox" id="student" name="student">
+            </label>
+            <br>
+            <input type="radio" id="gender_male" name="gender" value="male">
+            <label for="male">Male</label>
+            <input type="radio" id="gender_female" name="gender" value="female">
+            <label for="female">Female</label>
+            <input type="radio" id="gender_other" name="gender" value="other">
+            <label for="other">Other</label>
+            <br>
+            <input type="submit" value="Submit" onclick="displayFormContents()">
+        </form>
+    </body>
