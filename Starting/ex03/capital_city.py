@@ -22,6 +22,8 @@ def main():
             name = states[state]
             capital = capital_cities[name]
             print(capital)
+        else:
+            print("Unknown state")
 
 
 if __name__ == '__main__':
