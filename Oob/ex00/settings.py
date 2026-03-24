@@ -1,0 +1,5 @@
+title = "CV"
+name = "Eduardo"
+surname = "Rodriguez"
+age = "20"
+profession = "Pilates professor"
