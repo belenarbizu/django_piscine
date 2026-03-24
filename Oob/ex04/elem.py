@@ -12,14 +12,21 @@ class Text(str):
         """
         Do you really need a comment to understand this method?..
         """
-        return super().__str__().replace('\n', '\n<br />\n')
+        text = super().__str__()
+        text = text.replace('<', '&lt;').replace('>', '&gt;')
+        if text == '"':
+            text = text.replace('"', '&quot;')
+        text = text.replace('\n', '\n<br />\n')
+        return text
 
 
 class Elem:
     """
     Elem will permit us to represent our HTML elements.
     """
-    [...]
+    class ValidationError(Exception):
+        def __init__(self):
+            super().__init__('Invalid type.')
 
     def __init__(self, tag='div', attr={}, content=None, tag_type='double'):
         """
@@ -42,9 +49,11 @@ class Elem:
         elements...).
         """
         if self.tag_type == 'double':
-            [...]
+            result = '<' + self.tag + self.__make_attr() + '>'
+            result += self.__make_content()
+            result += '</' + self.tag + '>'
         elif self.tag_type == 'simple':
-            [...]
+            result = '<' + self.tag + self.__make_attr() + '/>'
         return result
 
     def __make_attr(self):
@@ -60,12 +69,11 @@ class Elem:
         """
         Here is a method to render the content, including embedded elements.
         """
-
         if len(self.content) == 0:
             return ''
         result = '\n'
         for elem in self.content:
-            result += [...]
+            result += '  ' + str(elem).replace('\n', '\n  ') + '\n'
         return result
 
     def add_content(self, content):
@@ -89,4 +97,7 @@ class Elem:
 
 
 if __name__ == '__main__':
-    [...]
+    elem = Elem(tag='html', content=[Elem(tag='head', content=Elem(tag='title', content=Text('"Hello ground!"'))),
+                                     Elem(tag='body', content=[Elem(tag='h1', content=Text('"Oh no, not again!"')),
+                                                                Elem(tag='img', attr={'src':'http://i.imgur.com/pfp3T.jpg'}, tag_type='simple')])])
+    print(elem)
