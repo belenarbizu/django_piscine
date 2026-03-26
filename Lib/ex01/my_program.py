@@ -1,10 +1,10 @@
-from local_lib import Path
+from local_lib.path import Path
 
 
 if __name__ == "__main__":
-    path = Path("new_folder").mkdir(exist_ok=True)
+    dir_path = Path("new_folder").mkdir_p()
     file = "file.txt"
-    full_path = path / file
+    full_path = dir_path / file
     with open(full_path, 'w') as f:
         f.write('Hello World!')
     with open(full_path, 'r') as f:
