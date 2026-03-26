@@ -4,5 +4,6 @@ def main():
         for number in content:
             print(number)
 
+
 if __name__ == "__main__":
     main()

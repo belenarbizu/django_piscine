@@ -1,5 +1,4 @@
 def sort_by_year(d):
-    """Display the names of the musicians sorted by year in ascending order and alphabetic order. One per line without showing the year."""
     for key, value in d.items():
         d[key] = int(value)
     sorted_d = sorted(d.items(), key=lambda x: (x[1], x[0]))
