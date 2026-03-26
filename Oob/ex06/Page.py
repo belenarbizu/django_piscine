@@ -21,26 +21,19 @@ class Page:
             class_elem = self.class_elem
 
         if not self.tree_path(class_elem):
-            print("Invalid tree path")
             return False
         if not isinstance(class_elem, Text):
             if not self.html_rules(class_elem):
-                print(f"Invalid {class_elem.tag} rules")
                 return False
             if not self.head_rules(class_elem):
-                print(f"Invalid {class_elem.tag} rules")
                 return False
             if not self.body_or_div_rules(class_elem):
-                print(f"Invalid {class_elem.tag} rules")
                 return False
             if not self.text_rules(class_elem):
-                print(f"Invalid {class_elem.tag} rules")
                 return False
             if not self.list_rules(class_elem):
-                print(f"Invalid {class_elem.tag} rules")
                 return False
             if not self.table_rules(class_elem):
-                print(f"Invalid {class_elem.tag} rules")
                 return False
         
             for elem in class_elem.content:
@@ -55,12 +48,14 @@ class Page:
             return True
         
         if class_elem.tag not in VALID_TAGS:
+            print(f"Error: Tag '{class_elem.tag}' is not a valid HTML tag.")
             return False
         
         for elem in class_elem.content:
             if isinstance(elem, Text):
                 continue
             if elem.tag not in VALID_TAGS:
+                print(f"Error: Child tag '{elem.tag}' inside '{class_elem.tag}' is not valid.")
                 return False
         
         return True
@@ -71,6 +66,7 @@ class Page:
             if len(class_elem.content) == 2 and isinstance(class_elem.content[0], Head) and isinstance(class_elem.content[1], Body):
                 return True
             else:
+                print("Error: 'html' element must contain exactly one 'head' followed by one 'body'.")
                 return False
         return True
 
@@ -78,8 +74,10 @@ class Page:
     def head_rules(self, class_elem):
         if class_elem.tag == 'head':
             if len(class_elem.content) != 1:
+                print("Error: 'head' element must contain exactly one 'title' element.")
                 return False
             if not isinstance(class_elem.content[0], Title):
+                print("Error: The only child of 'head' must be a 'title' element.")
                 return False
         return True
 
@@ -87,6 +85,7 @@ class Page:
     def body_or_div_rules(self, class_elem):
         if class_elem.tag == 'body' or class_elem.tag == 'div':
             if not all(isinstance(elem, BODY_OR_DIV_CONTENT) for elem in class_elem.content):
+                print(f"Error: '{class_elem.tag}' contains invalid child types. Allowed: H1, H2, Div, Table, Ul, Ol, Span, or Text.")
                 return False
         return True
 
@@ -94,18 +93,23 @@ class Page:
     def text_rules(self, class_elem):
         if class_elem.tag in TEXT_IN_CONTENT:
             if len(class_elem.content) != 1 or not isinstance(class_elem.content[0], Text):
+                print(f"Error: '{class_elem.tag}' must contain exactly one 'Text' element.")
                 return False
 
         if class_elem.tag == 'p':
             if not class_elem.content:
+                print("Error: 'p' element cannot be empty.")
                 return False
             if not all(isinstance(elem, Text) for elem in class_elem.content):
+                print("Error: 'p' element must contain only 'Text' elements.")
                 return False
         
         if class_elem.tag == 'span':
             if not class_elem.content:
+               print("Error: 'span' element cannot be empty.")
                return False
             if not all(isinstance(elem, (Text, P)) for elem in class_elem.content):
+                print("Error: 'span' element must contain only 'Text' or 'p' elements.")
                 return False
         return True
 
@@ -113,8 +117,10 @@ class Page:
     def list_rules(self, class_elem):
         if class_elem.tag == 'ul' or class_elem.tag == 'ol':
             if not class_elem.content:
+                print(f"Error: '{class_elem.tag}' element cannot be empty.")
                 return False
             if not all(isinstance(elem, Li) for elem in class_elem.content):
+                print(f"Error: '{class_elem.tag}' must contain only 'li' elements.")
                 return False
         return True
 
@@ -122,17 +128,23 @@ class Page:
     def table_rules(self, class_elem):
         if class_elem.tag == 'table':
             if not class_elem.content:
+                print("Error: 'table' element cannot be empty.")
                 return False
             if not all(isinstance(elem, Tr) for elem in class_elem.content):
+                print("Error: 'table' must contain only 'tr' elements.")
                 return False
 
         if class_elem.tag == 'tr':
             if not class_elem.content:
+                print("Error: 'tr' element cannot be empty.")
                 return False
-            first_type = type(class_elem.content[0])
-            if first_type not in (Td, Th):
+            first_elem = class_elem.content[0]
+            if not isinstance(first_elem, (Td, Th)):
+                print("Error: 'tr' must contain only 'th' or 'td' elements.")
                 return False
+            first_type = type(first_elem)
             if not all(isinstance(elem, first_type) for elem in class_elem.content):
+                print("Error: 'tr' elements must be of the same type (cannot mix 'th' and 'td').")
                 return False
         return True
 
