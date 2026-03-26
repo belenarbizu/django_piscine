@@ -97,13 +97,13 @@ class Page:
                 return False
 
         if class_elem.tag == 'p':
-            if len(class_elem.content) == 0 or len(set(class_elem.content)) != 1:
+            if not class_elem.content:
                 return False
             if not all(isinstance(elem, Text) for elem in class_elem.content):
                 return False
         
         if class_elem.tag == 'span':
-            if len(class_elem.content) == 0 or len(set(class_elem.content)) != 1:
+            if not class_elem.content:
                return False
             if not all(isinstance(elem, (Text, P)) for elem in class_elem.content):
                 return False
@@ -112,7 +112,7 @@ class Page:
 
     def list_rules(self, class_elem):
         if class_elem.tag == 'ul' or class_elem.tag == 'ol':
-            if len(class_elem.content) == 0 or len(set(class_elem.content)) != 1:
+            if not class_elem.content:
                 return False
             if not all(isinstance(elem, Li) for elem in class_elem.content):
                 return False
@@ -121,15 +121,18 @@ class Page:
 
     def table_rules(self, class_elem):
         if class_elem.tag == 'table':
-            if len(class_elem.content) == 0 or len(set(class_elem.content)) != 1:
+            if not class_elem.content:
                 return False
             if not all(isinstance(elem, Tr) for elem in class_elem.content):
                 return False
 
         if class_elem.tag == 'tr':
-            if not all(isinstance(elem, (Td, Th)) for elem in class_elem.content):
+            if not class_elem.content:
                 return False
-            elif len(set(class_elem.content)) != 1:
+            first_type = type(class_elem.content[0])
+            if first_type not in (Td, Th):
+                return False
+            if not all(isinstance(elem, first_type) for elem in class_elem.content):
                 return False
         return True
 
@@ -150,8 +153,47 @@ if __name__ == '__main__':
     page_4 = Page(H1())
     page_5 = Page(Span(H1()))
     page_6 = Page(Ul(Body()))
-    page_7 = Page(Table(Th()))
+    page_7 = Page(Table([Th()]))
     page_8 = Page(Tr([Th(), Td()]))
+
+    page_9 = Page(
+        Html([
+            Head(
+                Title(Text('"Hello ground!"'))
+            ),
+            Body([
+                Div([
+                H1(Text('"Oh no, not again!"')),
+                Table([
+                    Tr([
+                        Th(Text('Name')),
+                        Th(Text('Age'))
+                    ]),
+                    Tr([
+                        Td(Text('Lupecio')),
+                        Td(Text('21'))
+                    ]),
+                    Tr([
+                        Td(Text('Pepa')),
+                        Td(Text('22'))
+                    ])
+                ])]),
+                H2(Text('Lista no ordenada')),
+                Ul([
+                    Li(Text('Item 1')),
+                    Li(Text('Item 2')),
+                    Li(Text('Item 3'))
+                ]),
+                H2(Text('Lista ordenada')),
+                Ol([
+                    Li(Text('Item 1')),
+                    Li(Text('Item 2')),
+                    Li(Text('Item 3'))
+                ]),
+            ])
+        ])
+                    )
+
     page_1.is_valid()
     page_2.is_valid()
     page_3.is_valid()
@@ -160,3 +202,6 @@ if __name__ == '__main__':
     page_6.is_valid()
     page_7.is_valid()
     page_8.is_valid()
+    if page_9.is_valid():
+        print("Valid page")
+    page_9.write_to_file('page_9.html')
