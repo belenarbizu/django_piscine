@@ -13,18 +13,38 @@ def api_search(string):
     pages = []
     visited = []
     found = False
-    pages.append(string)
     visited.append(url)
     try:
         while url != "https://en.wikipedia.org/wiki/Philosophy":
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, "html.parser")
-                all_p = soup.find_all("p")
+
+                redirect = soup.find(class_="mw-redirectedfrom")
+                if redirect:
+                    a_name = redirect.find("a")
+                    if a_name:
+                        title = a_name.get("title")
+                        url_redirect = f"https://en.wikipedia.org/wiki/{title}"
+                    if url_redirect not in visited:
+                        visited.append(url_redirect)
+                    print(title)
+                    pages.append(title)
+
+                main_title = soup.find(class_="mw-page-title-main")
+                if main_title:
+                    pages.append(main_title.text)
+                    print(main_title.text)
+
+                content_text = soup.find(id="mw-content-text")
+                context_ltr = content_text.find(class_="mw-content-ltr")
+                all_p = context_ltr.find_all("p")
+
                 for p in all_p:
                     if p.text.strip():
                         first_paragraph = p
                         break
+
                 for link in first_paragraph.find_all("a"):
                     href = link.get("href")
                     if not href or not href.startswith("/wiki/") or ":" in href or link.find_parent("i"):
@@ -36,14 +56,14 @@ def api_search(string):
                     else:
                         print("It leads to an infinite loop !")
                         sys.exit(1)
-                    pages.append(link.text)
                     break
+
                 if not found:
                     print("It leads to a dead end !")
                     sys.exit(1)
+
         if url == "https://en.wikipedia.org/wiki/Philosophy":
-            for page in pages:
-                print(page)
+            pages.append("Philosophy")
             print(f"{len(pages)} roads from {string} to philosophy !")
 
     except requests.exceptions.RequestException as e:
