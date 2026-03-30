@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Ex01: Display process of a static page.{% endblock %}
+
+{% block content %}
+<ol>
+    <li>Client sends an HTTP request: A user enters a URL in their browser and the browser sends an HTTP GET request to the server.</li>
+    <li>URL routing: Django checks the requested URL against its URL configuration. If it matches, Django calls the view.</li>
+    <li>View execution: The view receives the request object. It decides what to return.</li>
+    <li>Template loading: Django looks for the template file.</li>
+    <li>Template rendering: The template engine processes the file.</li>
+    <li>Server sends response: Django returns the final content. The web server sends it back to the browser.</li>
+    <li>Browser renders the page: The browser receives the HTML. Parses and displays it visually</li>
+</ol>
+{% endblock %}
