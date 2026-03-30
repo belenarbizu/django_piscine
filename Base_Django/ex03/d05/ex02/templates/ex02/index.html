@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django Form</title>
+</head>
+<body>
+    <h1>Django Form</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+    <br>
+    <h2>History</h2>
+    {% for log in history %}
+    {{ log }}<br>
+    {% endfor %}
+</body>
+</html>
