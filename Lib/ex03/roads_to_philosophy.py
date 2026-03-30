@@ -3,6 +3,19 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def remove_parantheses(p):
+    count = 0
+    result = ""
+    for char in p:
+        if char == "(":
+            count += 1
+        elif char == ")":
+            count -= 1
+        elif count == 0:
+            result += char
+    return result
+
+
 def api_search(string):
     string_url = string.replace(" ", "_")
     url = f"https://en.wikipedia.org/wiki/{string_url}"
@@ -44,10 +57,13 @@ def api_search(string):
                     if p.text.strip():
                         first_paragraph = p
                         break
+                
+                clean_paragraph = remove_parantheses(first_paragraph.text)
+
 
                 for link in first_paragraph.find_all("a"):
                     href = link.get("href")
-                    if not href or not href.startswith("/wiki/") or ":" in href or link.find_parent("i"):
+                    if not href or not href.startswith("/wiki/") or ":" in href or link.find_parent("i") or link.text not in clean_paragraph:
                         continue
                     url = f"https://en.wikipedia.org{href}"
                     if url not in visited:
@@ -57,13 +73,13 @@ def api_search(string):
                         print("It leads to an infinite loop !")
                         sys.exit(1)
                     break
-
                 if not found:
                     print("It leads to a dead end !")
                     sys.exit(1)
 
         if url == "https://en.wikipedia.org/wiki/Philosophy":
             pages.append("Philosophy")
+            print("Philosophy")
             print(f"{len(pages)} roads from {string} to philosophy !")
 
     except requests.exceptions.RequestException as e:
