@@ -4,6 +4,10 @@
 
 {% block title %}Ex01: Template engine.{% endblock %}
 
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/style2.css' %}">
+{% endblock %}
+
 {% block content %}
 <h1>How template engine works.</h1>
 <p>Django uses its own template system called the Django Template Language.</p>
