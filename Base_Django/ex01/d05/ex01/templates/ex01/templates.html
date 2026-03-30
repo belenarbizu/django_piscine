@@ -4,6 +4,10 @@
 
 {% block title %}Ex01: Template engine.{% endblock %}
 
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/style2.css' %}">
+{% endblock %}
+
 {% block content %}
 <h1>How template engine works.</h1>
 <p>Django uses its own template system called the Django Template Language.</p>
@@ -15,12 +19,12 @@
     <li>Produces a final HTML string.</li>
     <li>Returns it as an HTTP response.</li>
 </ol>
-<h1>Blocks</h1>
+<h3>Blocks</h3>
 <p>Blocks are used with template inheritance and it allows child templates to override parts of a base template.</p>
-<h1>Loops</h1>
+<h3>Loops</h3>
 <p>Iterate over a list or iterable from the context.</p>
-<h1>Conditional structures</h1>
+<h3>Conditional structures</h3>
 <p>Render content conditionally.</p>
-<h1>Displaying context variables</h1>
+<h3>Displaying context variables</h3>
 <p>Insert dynamic data into templates.</p>
 {% endblock %}
