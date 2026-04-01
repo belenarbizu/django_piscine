@@ -26,7 +26,7 @@ def init(request):
                     release_date date NOT NULL
                 )
                 """)
-        conn.close()
+
         return HttpResponse("OK")
     except Exception as e:
         return HttpResponse(f"Error: {e}")
