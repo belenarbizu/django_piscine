@@ -1,60 +1,35 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.conf import settings
-import psycopg2
-from psycopg2.extras import DictCursor
+from ex01.models import Movies
 
 
 def populate(request):
-    db_config = settings.DATABASES['default']
     try:
-        conn = psycopg2.connect(
-            dbname=db_config['NAME'],
-            user=db_config['USER'],
-            password=db_config['PASSWORD'],
-            host=db_config['HOST'],
-            port=db_config['PORT']
-        )
-        with conn:
-            with conn.cursor() as cur:
-                try:
-                    cur.execute("""
-                    INSERT INTO ex02_movies (title, episode_nb, director, producer, release_date)
-                    VALUES
-                        ('The Phantom Menace', 1, 'George Lucas', 'Rick McCallum', '1999-05-19'),
-                        ('Attack of the Clones', 2, 'George Lucas', 'Rick McCallum', '2002-05-16'),
-                        ('Revenge of the Sith', 3, 'George Lucas', 'Rick McCallum', '2005-05-19'),
-                        ('A New Hope', 4, 'George Lucas', 'Gary Kurtz, Rick McCallum', '1977-05-25'),
-                        ('The Empire Strikes Back', 5, 'Irvin Kershner', 'Gary Kurtz, Rick McCallum', '1980-05-17'),
-                        ('Return of the Jedi', 6, 'Richard Marquand', 'Howard G. Kazanjian, George Lucas, Rick McCallum', '1983-05-25'),
-                        ('The Force Awakens', 7, 'J. J. Abrams', 'Kathleen Kennedy, J. J. Abrams, Bryan Burk', '2015-12-11')
-                    """)
-                    conn.commit() # Without commit, it won't save the modifications
-                except Exception as e:
-                    conn.rollback()
-                    return HttpResponse(f"Error: {e}")
-
-        return HttpResponse("OK")
+        results = []
+        Movies.objects.create(title="The Phantom Menace", episode_nb=1, director="George Lucas", producer="Rick McCallum", release_date="1999-05-19")
+        results.append("OK.")
+        Movies.objects.create(title="Attack of the Clones", episode_nb=2, director="George Lucas", producer="Rick McCallum", release_date="2002-05-16")
+        results.append("OK.")
+        Movies.objects.create(title="Revenge of the Sith", episode_nb=3, director="George Lucas", producer="Rick McCallum", release_date="2005-05-19")
+        results.append("OK.")
+        Movies.objects.create(title="A New Hope", episode_nb=4, director="George Lucas", producer="Gary Kurtz, Rick McCallum", release_date="1977-05-25")
+        results.append("OK.")
+        Movies.objects.create(title="The Empire Strikes Back", episode_nb=5, director="Irvin Kershner", producer="Gary Kurtz, Rick McCallum", release_date="1980-05-17")
+        results.append("OK.")
+        Movies.objects.create(title="Return of the Jedi", episode_nb=6, director="Richard Marquand", producer="Howard G. Kazanjian, George Lucas, Rick McCallum", release_date="1983-05-25")
+        results.append("OK.")
+        Movies.objects.create(title="The Force Awakens", episode_nb=7, director="J. J. Abrams", producer="Kathleen Kennedy, J. J. Abrams, Bryan Burk", release_date="2015-12-11")
+        results.append("OK.")
+        return HttpResponse(results)
     except Exception as e:
         return HttpResponse(f"Error: {e}")
 
 
 def display(request):
-    db_config = settings.DATABASES['default']
     try:
-        conn = psycopg2.connect(
-            dbname=db_config['NAME'],
-            user=db_config['USER'],
-            password=db_config['PASSWORD'],
-            host=db_config['HOST'],
-            port=db_config['PORT']
-        )
-        with conn:
-            with conn.cursor(cursor_factory=DictCursor) as cur:
-                cur.execute("SELECT * FROM ex02_movies")
-                movies = cur.fetchall()
-                if not movies:
-                    return HttpResponse("No data available.")
-                return render(request, 'ex03/ex03_display.html', {'movies': movies})
+        movies = Movies.objects.all()
+        if not movies:
+            return HttpResponse("No data available.")
+        return render(request, "ex03/ex03_display.html", {"movies": movies})
     except Exception as e:
         return HttpResponse(f"Error: {e}")
