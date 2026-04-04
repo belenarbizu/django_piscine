@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from ex01.models import Movies
+from .models import Movies
 
 
 def populate(request):

@@ -30,21 +30,25 @@ def display(request):
         movies = Movies.objects.all()
         if not movies:
             return HttpResponse("No data available.")
-        return render(request, "ex05/ex05_display.html", {"movies": movies})
+        return render(request, "ex07/ex07_display.html", {"movies": movies})
     except Exception as e:
         return HttpResponse(f"Error: {e}")
 
 
-def remove(request):
+def update(request):
     try:
         if request.method == "POST":
             title = request.POST.get("title")
-            if title:
-                Movies.objects.filter(title=title).delete()
+            opening_crawl = request.POST.get("opening_crawl")
+            if title and opening_crawl:
+                movie = Movies.objects.get(title=title)
+                movie.opening_crawl = opening_crawl
+                movie.save()
 
         titles = Movies.objects.values_list("title", flat=True)
         if not titles:
             return HttpResponse("No data available.")
-        return render(request, "ex05/ex05_remove.html", {"titles": titles})
+        return render(request, "ex07/ex07_update.html", {"titles": titles})
+
     except Exception as e:
         return HttpResponse(f"Error: {e}")
