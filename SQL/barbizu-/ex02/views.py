@@ -42,26 +42,30 @@ def populate(request):
             host=db_config['HOST'],
             port=db_config['PORT']
         )
+        data = [
+            (1, 'The Phantom Menace', 'George Lucas', 'Rick McCallum', '1999-05-19'),
+            (2, 'Attack of the Clones', 'George Lucas', 'Rick McCallum', '2002-05-16'),
+            (3, 'Revenge of the Sith', 'George Lucas', 'Rick McCallum', '2005-05-19'),
+            (4, 'A New Hope', 'George Lucas', 'Gary Kurtz, Rick McCallum', '1977-05-25'),
+            (5, 'The Empire Strikes Back', 'Irvin Kershner', 'Gary Kurtz, Rick McCallum', '1980-05-17'),
+            (6, 'Return of the Jedi', 'Richard Marquand', 'Howard G. Kazanjian, George Lucas, Rick McCallum', '1983-05-25'),
+            (7, 'The Force Awakens', 'J. J. Abrams', 'Kathleen Kennedy, J. J. Abrams, Bryan Burk', '2015-12-11')
+        ]
+        results = []
         with conn:
             with conn.cursor() as cur:
                 try:
-                    cur.execute("""
-                    INSERT INTO ex02_movies (title, episode_nb, director, producer, release_date)
-                    VALUES
-                        ('The Phantom Menace', 1, 'George Lucas', 'Rick McCallum', '1999-05-19'),
-                        ('Attack of the Clones', 2, 'George Lucas', 'Rick McCallum', '2002-05-16'),
-                        ('Revenge of the Sith', 3, 'George Lucas', 'Rick McCallum', '2005-05-19'),
-                        ('A New Hope', 4, 'George Lucas', 'Gary Kurtz, Rick McCallum', '1977-05-25'),
-                        ('The Empire Strikes Back', 5, 'Irvin Kershner', 'Gary Kurtz, Rick McCallum', '1980-05-17'),
-                        ('Return of the Jedi', 6, 'Richard Marquand', 'Howard G. Kazanjian, George Lucas, Rick McCallum', '1983-05-25'),
-                        ('The Force Awakens', 7, 'J. J. Abrams', 'Kathleen Kennedy, J. J. Abrams, Bryan Burk', '2015-12-11')
-                    """)
-                    conn.commit() # Without commit, it won't save the modifications
+                    for movie in data:
+                        cur.execute("""
+                        INSERT INTO ex02_movies (episode_nb, title, director, producer, release_date)
+                        VALUES (%s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
+                        """, movie)
+                        results.append("OK.")
                 except Exception as e:
                     conn.rollback()
                     return HttpResponse(f"Error: {e}")
 
-        return HttpResponse("OK")
+        return HttpResponse(results)
     except Exception as e:
         return HttpResponse(f"Error: {e}")
 
