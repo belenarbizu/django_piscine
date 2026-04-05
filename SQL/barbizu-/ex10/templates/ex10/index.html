@@ -19,15 +19,18 @@
             <button type="submit">Search</button>
         </form>
         {% if characters %}
+            {% for character in characters %}
             <ul>
-                {% for character in characters %}
                 <li>{{ character.name }}</li>
                 <li>{{ character.gender }}</li>
                 <li>{{ character.film }}</li>
                 <li>{{ character.homeworld }}</li>
                 <li>{{ character.diameter }}</li>
-                {% endfor %}
             </ul>
+            {% endfor %}
+        {% endif %}
+        {% if empty_list %}
+        <p>Nothing corresponding to your research</p>
         {% endif %}
     </body>
 </html>

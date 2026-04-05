@@ -1,34 +1,47 @@
 from django.shortcuts import render
-from .models import Planets, People, Movies
+from .models import People
 from django.http import HttpResponse
+from .forms import SearchForm
 
 
 def index(request):
     try:
-        if request.method == "POST":
-            min_date = request.POST.get("min_date")
-            max_date = request.POST.get("max_date")
-            diameter = request.POST.get("diameter")
-            gender = request.POST.get("gender")
-            characters = []
-            if min_date and max_date and diameter and gender:
-                movies = Movies.objects.filter(release_date__range=(min_date, max_date), characters__gender=gender).distinct()
-                planets = Planets.objects.filter(diameter__gte=diameter).distinct()
-                people = People.objects.filter(gender=gender).distinct()
-                print(movies)
-                print(planets)
-                print(people)
-                name = people.values_list("name", flat=True)
-                gender = people.values_list("gender", flat=True)
-                film = movies.values_list("title", flat=True)
-                homeworld = planets.values_list("name", flat=True)
-                diameter = planets.values_list("diameter", flat=True)
-                for i in range(len(name)):
-                    characters.append({"name": name[i], "gender": gender[i], "film": film[i], "homeworld": homeworld[i], "diameter": diameter[i]})
-            return render(request, "ex10/ex10_index.html", {"characters": characters})
-        
+        form = SearchForm()
         genders = People.objects.values_list("gender", flat=True).distinct()
-        return render(request, "ex10/ex10_index.html", {"genders": genders})
+        characters = []
+        empty_list = False
+        if request.method == "POST":
+            form = SearchForm(request.POST)
+            if form.is_valid():
+                min_date = form.cleaned_data["min_date"]
+                max_date = form.cleaned_data["max_date"]
+                diameter = form.cleaned_data["diameter"]
+                gender = form.cleaned_data["gender"]
+
+                results = People.objects.filter(
+                    gender=gender,
+                    homeworld__diameter__gt=diameter,
+                    movies__release_date__range=(min_date, max_date)
+                ).values(
+                    'name',
+                    'gender',
+                    'movies__title',
+                    'homeworld__name',
+                    'homeworld__diameter'
+                ).order_by('name')
+
+                for item in results:
+                    characters.append({
+                        "name": item['name'],
+                        "gender": item['gender'],
+                        "film": item['movies__title'],
+                        "homeworld": item['homeworld__name'],
+                        "diameter": item['homeworld__diameter']
+                    })
+                if not characters:
+                    empty_list = True
+
+        return render(request, "ex10/index.html", {"characters": characters, "genders": genders, "form": form, "empty_list": empty_list})
     except Exception as e:
         return HttpResponse(f"Error: {e}")
 
