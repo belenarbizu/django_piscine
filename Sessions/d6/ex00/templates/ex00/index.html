@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Life Pro Tips</title>
+</head>
+<body>
+    <nav>
+        Hello <span id="user-name">{{ name }}</span>!
+    </nav>
+    <script>
+        function refreshName() {
+            fetch("{% url 'get_name' %}")
+                .then(response => response.json())
+                .then(data => {
+                    const nameElement = document.getElementById('user-name');
+                    if (nameElement.innerText !== data.name) {
+                        nameElement.innerText = data.name;
+                    }
+                });
+        }
+
+        setInterval(refreshName, 2000);
+    </script>
+</body>
+</html>
