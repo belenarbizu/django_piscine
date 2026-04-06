@@ -7,6 +7,8 @@
 <body>
     <nav>
         Hello <span id="user-name">{{ name }}</span>!
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'registration' %}">Registration</a>
     </nav>
     <script>
         function refreshName() {

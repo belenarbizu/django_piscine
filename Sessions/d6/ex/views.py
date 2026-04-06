@@ -19,9 +19,15 @@ def update_session_name(request):
 
 def index(request):
     name, _ = update_session_name(request)
-    return render(request, "ex00/index.html", {"name": name})
+    return render(request, "ex/index.html", {"name": name})
 
 def get_name(request):
     """Endpoint para AJAX que devuelve el nombre actual en JSON."""
     name, time_left = update_session_name(request)
     return JsonResponse({"name": name, "time_left": time_left})
+
+def login(request):
+    return render(request, "ex/login.html")
+
+def registration(request):
+    return render(request, "ex/registration.html")
